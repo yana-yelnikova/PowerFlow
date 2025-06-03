@@ -12,23 +12,34 @@ sources:
       - name: appsflyer_raw
       - name: transactions
 
-
-
 models:
-    - name: my_first_dbt_model
-      description: "A starter dbt model"
-      columns:
-          - name: id
-            description: "The primary key for this table"
-            tests:
-                - unique
-                - not_null
-
-    - name: my_second_dbt_model
-      description: "A starter dbt model"
-      columns:
-          - name: id
-            description: "The primary key for this table"
-            tests:
-                - unique
-                - not_null
+  - name: registrations_clean
+    columns: 
+      - name: user_id
+        tests: #tests that would be run on the column
+          - unique
+  - name: marketing_attribution 
+    columns: 
+      - name: device_id
+        tests:
+          - unique
+          - not_null
+      - name: attribution_cost
+        tests:
+          - not_null
+  - name: ltv
+    columns: 
+      - name: reg_date
+        tests:
+            - not_null
+      - name: transaction_date
+        tests:
+           - not_null
+  - name: roi
+    columns: 
+      - name: attribution_cost
+        tests:
+            - not_null
+      - name: roi
+        tests:
+           - not_null      
