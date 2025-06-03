@@ -45,7 +45,7 @@ models:
         tests:
             - not_null
       - name: roi
-        description: Calculeted as ltv on a day divided by attribution_cost
+        description: Calculated as ltv on a day divided by attribution_cost
         tests:
            - not_null      
   - name: stg_google_ads
