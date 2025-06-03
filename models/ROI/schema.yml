@@ -1,6 +1,19 @@
 
 version: 2
 
+sources:
+  - name: POWERFLOW
+    database: POWERFLOW       # Убедись, что имя базы данных и схемы совпадают с тем, что в Snowflake
+    schema: PUBLIC            # Замени, если используется другая схема
+    tables:
+      - name: registrations
+      - name: google_ads
+      - name: campaign_costs
+      - name: appsflyer_raw
+      - name: transactions
+
+
+
 models:
     - name: my_first_dbt_model
       description: "A starter dbt model"
