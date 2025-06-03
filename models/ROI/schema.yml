@@ -3,8 +3,8 @@ version: 2
 
 sources:
   - name: powerflow
-    database: POWERFLOW       # Убедись, что имя базы данных и схемы совпадают с тем, что в Snowflake
-    schema: PUBLIC            # Замени, если используется другая схема
+    database: POWERFLOW       
+    schema: PUBLIC            
     tables:
       - name: registrations
       - name: google_ads
@@ -14,11 +14,13 @@ sources:
 
 models:
   - name: registrations_clean
+    description: This model filters the raw registrations data to include only users who have completed the registration process by removing rows with missing user_id values.
     columns: 
       - name: user_id
         tests: #tests that would be run on the column
           - unique
-  - name: marketing_attribution 
+  - name: marketing_attribution
+    description: This model combines Appsflyer and Google Ads attribution data into a unified format using a UNION, allowing for consistent analysis across marketing channels.
     columns: 
       - name: device_id
         tests:
@@ -28,6 +30,7 @@ models:
         tests:
           - not_null
   - name: ltv
+    description: This model calculates the Lifetime Value (LTV) of each user by summing their cumulative spending over time since registration. It uses the registration date and transaction data to determine each user's lifetime and total revenue contribution.
     columns: 
       - name: reg_date
         tests:
@@ -36,10 +39,12 @@ models:
         tests:
            - not_null
   - name: roi
+    description: This model combines the user lifetime value (LTV) with attribution data to calculate the Return on Investment (ROI) per user. It joins the ltv and reg_with_attribution tables and uses the DIV0() function to safely compute ROI, avoiding division-by-zero errors.
     columns: 
       - name: attribution_cost
         tests:
             - not_null
       - name: roi
+        description: Calculeted as ltv on a day divided by attribution_cost
         tests:
            - not_null      
