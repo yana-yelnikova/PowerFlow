@@ -1,4 +1,5 @@
-SELECT *
-from {{ ref('stg_google_ads') }}
-UNION 
-SELECT * from {{source('powerflow','appsflyer_raw')}}
+select *
+from {{ ref("stg_google_ads") }}
+union
+select *
+from {{ source("powerflow", "appsflyer_raw") }}
