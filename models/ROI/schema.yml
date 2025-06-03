@@ -8,7 +8,6 @@ sources:
     tables:
       - name: registrations
       - name: google_ads
-      - name: campaign_costs
       - name: appsflyer_raw
       - name: transactions
 
@@ -42,9 +41,60 @@ models:
     description: This model combines the user lifetime value (LTV) with attribution data to calculate the Return on Investment (ROI) per user. It joins the ltv and reg_with_attribution tables and uses the DIV0() function to safely compute ROI, avoiding division-by-zero errors.
     columns: 
       - name: attribution_cost
+        description: May be 0 for organic users
         tests:
             - not_null
       - name: roi
         description: Calculeted as ltv on a day divided by attribution_cost
         tests:
            - not_null      
+  - name: stg_google_ads
+    description: This staging model standardizes Google Ads attribution data. It assigns a fixed channel name ('Google_Ads'), renames campaign to campaign_id, and joins with the campaign_cost table to retrieve attribution cost per campaign.
+    columns:
+    - name: device_id
+      description: Unique identifier of the user's device.
+      tests:
+        - not_null
+    - name: attribution_time
+      description: Timestamp of when the attribution occurred.
+      tests:
+        - not_null
+    - name: channel
+      description: Fixed value 'Google_Ads' to identify the attribution source.
+      tests:
+        - not_null
+    - name: campaign_id
+      description: Campaign name from Google Ads data.
+      tests:
+        - not_null
+    - name: attribution_cost
+      description: Cost of the campaign from the campaign_cost table. May be null if no matching campaign exists.
+  - name: users_with_attribution
+    description: This model joins the cleaned registrations with marketing attribution data to assign each user an acquisition channel, campaign ID, and attribution cost. Users without marketing attribution data are flagged as 'organic' with zero attribution cost.
+    columns:
+    - name: user_id
+      description: Unique identifier of the user.
+      tests:
+        - not_null
+    - name: registration_time
+      description: Timestamp when the user completed registration.
+      tests:
+        - not_null
+    - name: device_id
+      description: Device identifier linked to the user.
+      tests:
+        - not_null
+    - name: attribution_time
+      description: Timestamp of the marketing attribution, if any.
+    - name: channel
+      description: Acquisition channel for the user; 'organic' if no marketing attribution is found.
+      tests:
+        - not_null
+    - name: campaign_id
+      description: Marketing campaign ID; 'organic' if not attributed.
+      tests:
+        - not_null
+    - name: attribution_cost
+      description: Cost associated with the user acquisition; zero for organic users.
+      tests:
+        - not_null
